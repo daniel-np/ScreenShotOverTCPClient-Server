@@ -20,7 +20,7 @@ public class TextMenu {
         System.out.println("(1) Start server");
         System.out.println("(2) Request screenshot");
         System.out.println("(3) Settings");
-        System.out.println("(q) Quit client");
+        System.out.println("(q) Quit");
         menuInput();
     }
 
