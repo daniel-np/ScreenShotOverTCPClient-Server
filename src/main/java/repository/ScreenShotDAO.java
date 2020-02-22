@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ScreenShotDAO {
     private ArrayList<String> imagePaths;
