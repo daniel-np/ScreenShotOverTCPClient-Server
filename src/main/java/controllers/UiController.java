@@ -7,22 +7,29 @@ public class UiController {
     private Server server = new Server();
     private Client client = new Client();
 
-    public void startServer(int timer) {
-        server.start();
+
+    public enum intervalTimer {
+        SHORT(30000),
+        MEDIUM(60000),
+        LONG(120000);
+
+        intervalTimer(int i) {
+            this.time = i;
+        }
+
+        private int time;
+
+        public int getTime() {
+            return time;
+        }
     }
 
-    public void startClient(int timer) {
-        if(!client.isRunning()) {
-            client.start();
-        } else {
-            switch (timer) {
-                case 0: client.setScreenShotTimer(30000);
-                break;
-                case 1: client.setScreenShotTimer(60000);
-                break;
-                case 2: client.setScreenShotTimer(120000);
-            }
-        }
+    public void startServer(intervalTimer intervalTimer) {
+        server.start(intervalTimer.getTime());
+    }
+
+    public void startClient(intervalTimer intervalTimer) {
+        client.start(intervalTimer.getTime());
     }
 
     public String getClientHostAddress() {

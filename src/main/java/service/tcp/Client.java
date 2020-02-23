@@ -25,12 +25,12 @@ public class Client extends Observable implements Runnable{
     private String path = "";
     private InetAddressValidator validator = new InetAddressValidator();
 
-
     public Client() {
 
     }
 
-    public void start() {
+    public void start(int screenShotTimer) {
+        this.screenShotTimer = screenShotTimer;
         if (t == null) {
             t = new Thread(this);
             t.start();

@@ -16,17 +16,34 @@ public class Server extends Observable implements Runnable{
     private Thread t;
     private int timer;
     private boolean isRunning = false;
-    long startTime, endTime, duration;
+    private BufferedImage bufferedImage;
+    private Thread screenShotThread;
+    private int timerInterval;
 
     public Server() {
 
     }
 
-    public void start() {
+    public void start(int timerInterval) {
+        this.timerInterval = timerInterval;
         if (t == null) {
             t = new Thread(this);
             t.start();
         }
+    }
+
+    private void startScreenShotThread(int timerInterval) {
+        screenShotThread = new Thread(()->{
+            while(true) {
+                try {
+                    bufferedImage = Screenshot.captureWholeScreen();
+                    Thread.sleep(timerInterval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        screenShotThread.start();
     }
 
     @Override
@@ -35,11 +52,11 @@ public class Server extends Observable implements Runnable{
 
         ServerSocket server;
         Socket connection;
-        int counter = 1;
         String message;
         try {
             server = new ServerSocket(5194, 100);
             messageOut("Server started...");
+            startScreenShotThread(timerInterval);
 
             while(isRunning) {
                 // Establishing connection
@@ -51,15 +68,15 @@ public class Server extends Observable implements Runnable{
                 DataOutputStream outputStream = new DataOutputStream(bufferedOutputStream);
 
                 // Image screenshot handling
-                BufferedImage image = Screenshot.captureWholeScreen();
                 messageOut("Screen captured");
-                startTime = System.nanoTime();
-                boolean success = Screenshot.streamOutImage(image, outputStream);
+                long startTime = System.nanoTime();
+                assert bufferedImage != null;
+                boolean success = Screenshot.streamOutImage(bufferedImage, outputStream);
                 if (success) {
                     outputStream.close();
                     // Duration
-                    endTime = System.nanoTime();
-                    duration = (endTime - startTime) /1000000;
+                    long endTime = System.nanoTime();
+                    long duration = (endTime - startTime) / 1000000;
                     messageOut("Transaction completed in " + duration + "ms!");
                 } else {
                     messageOut("Transaction failed!");
