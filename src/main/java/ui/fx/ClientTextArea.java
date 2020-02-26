@@ -7,11 +7,11 @@ import java.util.Observer;
 
 public class ClientTextArea extends TextArea implements Observer {
 
-    public ClientTextArea(String name, int rows, int colums){
+    public ClientTextArea(String name, int rows, int columns){
         this.setEditable(false);
         this.setText(name);
         this.setPrefRowCount(rows);
-        this.setPrefColumnCount(colums);
+        this.setPrefColumnCount(columns);
     }
 
     @Override
