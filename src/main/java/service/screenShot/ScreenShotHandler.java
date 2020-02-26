@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 
-public class Screenshot {
+public class ScreenShotHandler {
 
     public static BufferedImage captureWholeScreen() {
         try {

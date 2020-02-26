@@ -1,6 +1,6 @@
 package service.tcp;
 
-import service.screenShot.Screenshot;
+import service.screenShot.ScreenShotHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -36,7 +36,7 @@ public class Server extends Observable implements Runnable{
         screenShotThread = new Thread(()->{
             while(true) {
                 try {
-                    bufferedImage = Screenshot.captureWholeScreen();
+                    bufferedImage = ScreenShotHandler.captureWholeScreen();
                     Thread.sleep(timerInterval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -71,7 +71,7 @@ public class Server extends Observable implements Runnable{
                 messageOut("Screen captured");
                 long startTime = System.nanoTime();
                 assert bufferedImage != null;
-                boolean success = Screenshot.streamOutImage(bufferedImage, outputStream);
+                boolean success = ScreenShotHandler.streamOutImage(bufferedImage, outputStream);
                 if (success) {
                     outputStream.close();
                     // Duration

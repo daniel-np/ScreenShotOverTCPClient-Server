@@ -1,7 +1,8 @@
 package service.tcp;
 
 import org.apache.commons.validator.routines.InetAddressValidator;
-import service.screenShot.Screenshot;
+import service.screenShot.ScreenShotHandler;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -10,7 +11,6 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Observable;
 
 public class Client extends Observable implements Runnable{
@@ -68,7 +68,7 @@ public class Client extends Observable implements Runnable{
                 int width = dataInputStream.readInt();
                 int height = dataInputStream.readInt();
 
-                image = Screenshot.streamInImage(dataInputStream, width, height, 1);
+                image = ScreenShotHandler.streamInImage(dataInputStream, width, height, 1);
 
                 transferInProgress = false;
 
@@ -78,11 +78,11 @@ public class Client extends Observable implements Runnable{
                 message = "Transaction completed in " + duration + "ms!";
                 messageOut(message);
 
-                //image = Screenshot.constructImage(rgb, 1);
+                //image = ScreenShotHandler.constructImage(rgb, 1);
                 path = Client.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
                 String fileName = endTime/1000000 + "ScreenShot.png";
                 String filePath = path + fileName;
-                Screenshot.saveImage(filePath, image);
+                ScreenShotHandler.saveImage(filePath, image);
 
                 message = "ScreenShot Saved: " + fileName;
                 messageOut(message);

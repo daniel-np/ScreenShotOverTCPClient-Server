@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import service.screenShot.Screenshot;
+import service.screenShot.ScreenShotHandler;
 
 import java.awt.image.BufferedImage;
 
@@ -28,7 +28,7 @@ public class MainStage extends Application {
 
         //Adding scene to the stage
         Scene screenShotScene = mainScene();
-        screenShotScene.setFill(Color.BEIGE);
+        screenShotScene.setFill(Color.BLACK);
         stage.setScene(screenShotScene);
 
         //Displaying the contents of the stage
@@ -60,9 +60,9 @@ public class MainStage extends Application {
     }
 
     private Image takeScreenShot() {
-        BufferedImage screenShot  = Screenshot.captureWholeScreen();
-        String path = System.getProperty("user.home")+"/Screenshot.png";
-        Screenshot.saveImage(path, screenShot);
+        BufferedImage screenShot  = ScreenShotHandler.captureWholeScreen();
+        String path = System.getProperty("user.home")+"/ScreenShotHandler.png";
+        ScreenShotHandler.saveImage(path, screenShot);
 
         return new Image("file:" + path);
     }
