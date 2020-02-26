@@ -12,6 +12,7 @@ public class ClientTextArea extends TextArea implements Observer {
         this.setText(name);
         this.setPrefRowCount(rows);
         this.setPrefColumnCount(columns);
+        this.setWrapText(true);
     }
 
     @Override
