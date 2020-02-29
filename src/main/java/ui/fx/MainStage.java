@@ -98,7 +98,7 @@ public class MainStage extends Application {
         ChoiceBox<UiController.intervalTimer> choiceBox = new ChoiceBox<>(observableList);
         timerChoiceBoxLabel.setLabelFor(choiceBox);
 
-        choiceBox.setOnAction((a)->{System.out.println(choiceBox.getValue().getTime());});
+        choiceBox.setOnAction((a)->{uiController.setScreenShotTimer(choiceBox.getValue());});
 
 
 

@@ -48,4 +48,22 @@ public class UiController {
     public boolean setClientHostAddress(String address) {
         return client.setHostAddress(address);
     }
+
+    public void setScreenShotTimer(intervalTimer timer) {
+        client.setScreenShotTimer(timer.getTime());
+        server.setTimer(timer.getTime());
+    }
+
+    public intervalTimer getScreenShotTimer() {
+        int timer = client.getScreenShotTimer();
+
+        intervalTimer returnValue = intervalTimer.SHORT;
+        for (intervalTimer intTimer : intervalTimer.values()) {
+            if(intTimer.getTime() == timer) {
+                returnValue = intTimer;
+                break;
+            }
+        }
+        return returnValue;
+    }
 }
