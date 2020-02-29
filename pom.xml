@@ -27,6 +27,13 @@
         <artifactId>javafx-controls</artifactId>
         <version>11</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.guigarage/javafx-collection -->
+    <dependency>
+        <groupId>com.guigarage</groupId>
+        <artifactId>javafx-collection</artifactId>
+        <version>0.7</version>
+        <type>pom</type>
+    </dependency>
     <dependency>
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
