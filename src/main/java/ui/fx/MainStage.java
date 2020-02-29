@@ -2,11 +2,19 @@ package ui.fx;
 
 import controllers.UiController;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import service.screenShot.ScreenShotHandler;
 
@@ -27,15 +35,23 @@ public class MainStage extends Application {
         stage.setTitle("ScreenShot App");
 
         //Adding scene to the stage
-        Scene screenShotScene = mainScene();
-        screenShotScene.setFill(Color.BLACK);
-        stage.setScene(screenShotScene);
+        Scene mainScene = mainScene();
+        //screenShotGroup.setFill(Color.BLACK);
+        stage.setScene(mainScene);
+        stage.setResizable(false);
 
         //Displaying the contents of the stage
         stage.show();
     }
 
     private Scene mainScene() {
+        VBox vBox = new VBox(clientServerControlGroup(), screenShotGroup());
+        vBox.setSpacing(10);
+
+        return new Scene(vBox);
+    }
+
+    private Group screenShotGroup() {
         //Creating an image
 
         //Setting the image view
@@ -53,10 +69,52 @@ public class MainStage extends Application {
         imageView.setPreserveRatio(true);
 
         //Creating a Group object
-        Group root = new Group(imageView);
+        HBox hBox = new HBox(imageView);
+        hBox.setAlignment(Pos.CENTER);
 
         //Creating a scene object
-        return new Scene(root, 600, 400);
+        return new Group(hBox);
+    }
+
+    private Group clientServerControlGroup() {
+
+        // Output Area
+        int rows = 10;
+        int cols = 20;
+        ClientTextArea clientTextArea = new ClientTextArea("Client", rows, cols);
+        ServerTextArea serverTextArea = new ServerTextArea("Server", rows, cols);
+        HBox outputHBox = new HBox(clientTextArea, serverTextArea);
+        outputHBox.setSpacing(50);
+        // Control Area
+        Label addressLabel = new Label("Address");
+        TextField addressTextField = new TextField(uiController.getClientHostAddress());
+        addressTextField.setPrefColumnCount(9);
+        addressLabel.setLabelFor(addressTextField);
+
+        Label timerChoiceBoxLabel = new Label("Set timer");
+        ObservableList<UiController.intervalTimer> observableList =
+                FXCollections.observableArrayList(UiController.intervalTimer.values());
+
+        ChoiceBox<UiController.intervalTimer> choiceBox = new ChoiceBox<>(observableList);
+        timerChoiceBoxLabel.setLabelFor(choiceBox);
+
+        choiceBox.setOnAction((a)->{System.out.println(choiceBox.getValue().getTime());});
+
+
+
+        HBox controlHBox = new HBox(
+                addressLabel,
+                addressTextField,
+                timerChoiceBoxLabel,
+                choiceBox);
+        controlHBox.setSpacing(10);
+        controlHBox.setAlignment(Pos.CENTER);
+        // Parent VBox
+        VBox mainBox = new VBox(outputHBox, controlHBox);
+        mainBox.setSpacing(10);
+
+        Platform.runLater(mainBox::requestFocus);
+        return new Group(mainBox);
     }
 
     private Image takeScreenShot() {
