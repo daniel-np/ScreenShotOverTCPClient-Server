@@ -22,6 +22,15 @@ public class UiController {
         public int getTime() {
             return time;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder(super.toString().toLowerCase());
+            sb.replace(0,1, sb.substring(0,1).toUpperCase());
+            sb.append("(").append(time/1000).append("s)");
+
+            return sb.toString();
+        }
     }
 
     public void startServer(intervalTimer intervalTimer) {
