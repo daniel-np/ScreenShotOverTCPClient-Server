@@ -114,12 +114,12 @@ public class Client extends Observable implements Runnable {
                 messageOut("Connection refused" + "(" + ++connectionRefusedCounter + ")" + "...");
                 if (connectionRefusedCounter < 10) {
                     try {
-                        Thread.sleep(500 * connectionRefusedCounter);
+                        Thread.sleep(1000 * (int)(Math.pow(2, (double) connectionRefusedCounter)));
+                        messageOut("Retrying connection");
+                        connect(connectionRefusedCounter);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
-                    messageOut("Retrying connection");
-                    connect(connectionRefusedCounter);
                 } else {
                     messageOut("Stopping client...");
                 }
