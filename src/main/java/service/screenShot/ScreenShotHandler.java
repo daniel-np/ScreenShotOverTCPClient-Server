@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Objects;
 
 public class ScreenShotHandler {
 
@@ -17,9 +18,8 @@ public class ScreenShotHandler {
             Robot robot = new Robot();
 
             Rectangle captureField = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-            BufferedImage image = robot.createScreenCapture(captureField);
 
-            return image;
+            return robot.createScreenCapture(captureField);
         } catch (AWTException | InterruptedException ex) {
             ex.printStackTrace();
         }
@@ -52,7 +52,6 @@ public class ScreenShotHandler {
 
     public static boolean streamOutImage(BufferedImage image, DataOutputStream stream) {
         boolean success = true;
-
         try {
             stream.writeInt(image.getWidth());
             stream.writeInt(image.getHeight());

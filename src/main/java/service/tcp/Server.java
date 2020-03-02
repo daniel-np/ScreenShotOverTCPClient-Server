@@ -9,6 +9,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
 import java.util.Observable;
 
 public class Server extends Observable implements Runnable{
@@ -17,7 +18,6 @@ public class Server extends Observable implements Runnable{
     private int timer;
     private boolean isRunning = false;
     private BufferedImage bufferedImage;
-    private Thread screenShotThread;
     private int timerInterval;
 
     public Server() {
@@ -28,21 +28,24 @@ public class Server extends Observable implements Runnable{
         this.timerInterval = timerInterval;
         if (t == null) {
             t = new Thread(this);
+            t.setName("Server Thread");
             t.start();
         }
     }
 
     private void startScreenShotThread(int timerInterval) {
-        screenShotThread = new Thread(()->{
-            while(true) {
+        Thread screenShotThread = new Thread(() -> {
+            while (true) {
                 try {
                     bufferedImage = ScreenShotHandler.captureWholeScreen();
+                    messageOut("Screen captured");
                     Thread.sleep(timerInterval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
+        screenShotThread.setName("ScreenShot Thread");
         screenShotThread.start();
     }
 
@@ -53,10 +56,12 @@ public class Server extends Observable implements Runnable{
         ServerSocket server;
         Socket connection;
         String message;
+        bufferedImage = ScreenShotHandler.captureWholeScreen();
+        messageOut("Screen captured");
+
         try {
             server = new ServerSocket(5194, 100);
             messageOut("Server started...");
-            startScreenShotThread(timerInterval);
 
             while(isRunning) {
                 // Establishing connection
@@ -68,10 +73,8 @@ public class Server extends Observable implements Runnable{
                 DataOutputStream outputStream = new DataOutputStream(bufferedOutputStream);
 
                 // Image screenshot handling
-                messageOut("Screen captured");
                 long startTime = System.nanoTime();
-                assert bufferedImage != null;
-                boolean success = ScreenShotHandler.streamOutImage(bufferedImage, outputStream);
+                boolean success = ScreenShotHandler.streamOutImage(Objects.requireNonNull(bufferedImage), outputStream);
                 if (success) {
                     outputStream.close();
                     // Duration
@@ -81,6 +84,7 @@ public class Server extends Observable implements Runnable{
                 } else {
                     messageOut("Transaction failed!");
                 }
+                startScreenShotThread(timerInterval);
             }
         }catch (EOFException eof) {
             message = "Client terminated connection";

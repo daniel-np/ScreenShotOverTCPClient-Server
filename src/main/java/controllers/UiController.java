@@ -1,12 +1,22 @@
 package controllers;
 
+import service.screenShot.PCLScreenShot;
 import service.tcp.Client;
 import service.tcp.Server;
 
 public class UiController {
-    private Server server = new Server();
-    private Client client = new Client();
+    private Server server;
+    private Client client;
 
+    public UiController(PCLScreenShot observableScreenShot) {
+        this.client = new Client(observableScreenShot);
+        this.server = new Server();
+    }
+
+    public UiController() {
+        this.client = new Client();
+        this.server = new Server();
+    }
 
     public enum intervalTimer {
         SHORT(30000),
