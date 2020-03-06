@@ -58,6 +58,7 @@ public class Server extends Observable implements Runnable{
         String message;
         bufferedImage = ScreenShotHandler.captureWholeScreen();
         messageOut("Screen captured");
+        startScreenShotThread(timerInterval);
 
         try {
             server = new ServerSocket(5194, 100);
@@ -84,7 +85,6 @@ public class Server extends Observable implements Runnable{
                 } else {
                     messageOut("Transaction failed!");
                 }
-                startScreenShotThread(timerInterval);
             }
         }catch (EOFException eof) {
             message = "Client terminated connection";
