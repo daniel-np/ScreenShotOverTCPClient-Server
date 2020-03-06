@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.validator.routines.InetAddressValidator;
 import service.screenShot.PCLScreenShot;
 import service.screenShot.ScreenShotHandler;
 
@@ -123,20 +124,24 @@ public class MainStage extends Application {
         choiceBox.setValue(uiController.getScreenShotTimer());
         timerChoiceBoxLabel.setLabelFor(choiceBox);
 
-        choiceBox.setOnAction((actionEvent)->{uiController.setScreenShotTimer(choiceBox.getValue());});
+        choiceBox.setOnAction((actionEvent) -> {
+            uiController.setScreenShotTimer(choiceBox.getValue());
+        });
 
         Button startButton = new Button("Start");
-        startButton.setOnAction((actionEvent)-> {
-            if(addressTextField.getText().equals("127.0.0.1")){
-                // If localHost start both server and client
-                uiController.startServer(choiceBox.getValue());
-                uiController.startClient(choiceBox.getValue());
-            } else if(addressTextField.getText().equals("")){
-                // If no IP start only server
-                uiController.startServer(choiceBox.getValue());
+        startButton.setOnAction((actionEvent) -> {
+            if (isValidAddress(addressTextField.getText())) {
+                addressTextField.setDisable(true);
+                choiceBox.setDisable(true);
+                decideStartup(addressTextField.getText(), choiceBox.getValue());
             } else {
-                // Else start only client
-                uiController.startClient(choiceBox.getValue());
+                String addressString = addressTextField.getText();
+                addressTextField.clear();
+                addressTextField.setPromptText("INVALID");
+                addressTextField.setOnMouseClicked(e->{
+                    addressTextField.setText(addressString);
+                    addressTextField.positionCaret(addressString.length());
+                });
             }
         });
 
@@ -156,9 +161,31 @@ public class MainStage extends Application {
         return new Group(mainBox);
     }
 
+    private boolean isValidAddress(String addressTextField) {
+        InetAddressValidator inetAddressValidator = new InetAddressValidator();
+        if (addressTextField.equals("") || inetAddressValidator.isValidInet4Address(addressTextField)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void decideStartup(String addressTextField, UiController.intervalTimer choiceBoxValue) {
+        if (addressTextField.equals("127.0.0.1")) {
+            // If localHost start both server and client
+            uiController.startServer(choiceBoxValue);
+            uiController.startClient(choiceBoxValue);
+        } else if (addressTextField.equals("")) {
+            // If no IP start only server
+            uiController.startServer(choiceBoxValue);
+        } else {
+            // Else start only client
+            uiController.startClient(choiceBoxValue);
+        }
+    }
+
     private Image takeScreenShot() {
-        BufferedImage screenShot  = ScreenShotHandler.captureWholeScreen();
-        String path = System.getProperty("user.home")+"/ScreenShot " + System.currentTimeMillis()/1000 + ".png";
+        BufferedImage screenShot = ScreenShotHandler.captureWholeScreen();
+        String path = System.getProperty("user.home") + "/ScreenShot " + System.currentTimeMillis() / 1000 + ".png";
         ScreenShotHandler.saveImage(path, screenShot);
 
         return new Image("file:" + path);
