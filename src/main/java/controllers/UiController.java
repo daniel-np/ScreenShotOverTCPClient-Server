@@ -3,14 +3,15 @@ package controllers;
 import service.screenShot.PCLScreenShot;
 import service.tcp.Client;
 import service.tcp.Server;
+import ui.fx.PCLMessage;
 
 public class UiController {
     private Server server;
     private Client client;
 
-    public UiController(PCLScreenShot observableScreenShot) {
-        this.client = new Client(observableScreenShot);
-        this.server = new Server();
+    public UiController(PCLScreenShot observableScreenShot, PCLMessage observableClientMessage, PCLMessage observableServerMessage) {
+        this.client = new Client(observableScreenShot, observableClientMessage);
+        this.server = new Server(observableServerMessage);
     }
 
     public UiController() {

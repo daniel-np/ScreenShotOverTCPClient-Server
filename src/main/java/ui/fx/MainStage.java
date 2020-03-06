@@ -27,24 +27,22 @@ public class MainStage extends Application {
 
     private UiController uiController;
     private ImageView screenShotImageView = new ImageView();
+    private ClientTextArea clientTextArea;
+    private ServerTextArea serverTextArea;
 
     public MainStage() {
-        PCLScreenShotChannel screenShotChannel = new PCLScreenShotChannel();
+
+
         PCLScreenShot observableScreenShot = new PCLScreenShot();
-        observableScreenShot.addPropertyChangeListener(screenShotChannel);
-        uiController = new UiController(observableScreenShot);
-    }
+        observableScreenShot.addPropertyChangeListener(e -> screenShotImageView.setImage((Image) e.getNewValue()));
 
-    private class PCLScreenShotChannel implements PropertyChangeListener {
+        PCLMessage observableClientMessage = new PCLMessage();
+        observableClientMessage.addPropertyChangeListener(e -> clientTextArea.appendText("\n" + e.getNewValue()));
 
-        @Override
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            this.setScreenShot((Image) propertyChangeEvent.getNewValue());
-        }
+        PCLMessage observableServeMessage = new PCLMessage();
+        observableServeMessage.addPropertyChangeListener(e -> serverTextArea.appendText("\n" + e.getNewValue()));
 
-        private void setScreenShot(Image screenShot) {
-            screenShotImageView.setImage(screenShot);
-        }
+        uiController = new UiController(observableScreenShot, observableClientMessage, observableServeMessage);
     }
 
     public static void main(String[] args) {
@@ -101,8 +99,8 @@ public class MainStage extends Application {
         // Output Area
         int rows = 10;
         int cols = 20;
-        ClientTextArea clientTextArea = new ClientTextArea("Client", rows, cols);
-        ServerTextArea serverTextArea = new ServerTextArea("Server", rows, cols);
+        clientTextArea = new ClientTextArea("Client", rows, cols);
+        serverTextArea = new ServerTextArea("Server", rows, cols);
         HBox outputHBox = new HBox(clientTextArea, serverTextArea);
         outputHBox.setSpacing(50);
 
@@ -122,15 +120,13 @@ public class MainStage extends Application {
         choiceBox.setValue(uiController.getScreenShotTimer());
         timerChoiceBoxLabel.setLabelFor(choiceBox);
 
-        choiceBox.setOnAction((actionEvent) -> {
-            uiController.setScreenShotTimer(choiceBox.getValue());
-        });
+        choiceBox.setOnAction((actionEvent) -> uiController.setScreenShotTimer(choiceBox.getValue()));
 
         // Start Button
         final Boolean[] isStartButton = {true};
         Button startButton = new Button("Start");
         startButton.setOnAction((actionEvent) -> {
-            if(isStartButton[0]){
+            if (isStartButton[0]) {
                 if (isValidAddress(addressTextField.getText())) {
                     addressTextField.setDisable(true);
                     choiceBox.setDisable(true);
@@ -142,10 +138,11 @@ public class MainStage extends Application {
                     String addressString = addressTextField.getText();
                     addressTextField.clear();
                     addressTextField.setPromptText("INVALID");
-                    addressTextField.setOnMouseClicked(e->{
+                    addressTextField.setOnMouseClicked(e -> {
                         addressTextField.setText(addressString);
                         addressTextField.positionCaret(addressString.length());
-                        addressTextField.setOnMouseClicked(ie -> {});
+                        addressTextField.setOnMouseClicked(ie -> {
+                        });
                     });
                 }
             } else {
@@ -177,10 +174,7 @@ public class MainStage extends Application {
 
     private boolean isValidAddress(String addressTextField) {
         InetAddressValidator inetAddressValidator = new InetAddressValidator();
-        if (addressTextField.equals("") || inetAddressValidator.isValidInet4Address(addressTextField)) {
-            return true;
-        }
-        return false;
+        return addressTextField.equals("") || inetAddressValidator.isValidInet4Address(addressTextField);
     }
 
     private void decideStartup(String addressTextField, UiController.intervalTimer choiceBoxValue) {

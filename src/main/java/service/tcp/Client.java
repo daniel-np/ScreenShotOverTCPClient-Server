@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import service.screenShot.PCLScreenShot;
 import service.screenShot.ScreenShotHandler;
+import ui.fx.PCLMessage;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -14,9 +15,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.Objects;
-import java.util.Observable;
 
-public class Client extends Observable implements Runnable {
+public class Client implements Runnable {
 
     private Thread t;
     private String hostAddress = "127.0.0.1";
@@ -26,9 +26,11 @@ public class Client extends Observable implements Runnable {
     private int screenShotTimer = DEFAULT_TIMER;
     private InetAddressValidator validator = new InetAddressValidator();
     private PCLScreenShot observableScreenShot;
+    private PCLMessage observableClientMessage;
 
-    public Client(PCLScreenShot observableScreenShot) {
+    public Client(PCLScreenShot observableScreenShot, PCLMessage observableClientMessage) {
         this.observableScreenShot = observableScreenShot;
+        this.observableClientMessage = observableClientMessage;
     }
 
     public Client() {
@@ -144,13 +146,12 @@ public class Client extends Observable implements Runnable {
 
     private void messageOut(String message) {
         System.out.println("Client: " + message);
-        setChanged();
-        notifyObservers(message);
+        observableClientMessage.setClientMessage(message);
     }
 
     private synchronized void waitForScreenshot(int timer) {
         try {
-            t.sleep(timer);
+            Thread.sleep(timer);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package service.tcp;
 
 import service.screenShot.ScreenShotHandler;
+import ui.fx.PCLMessage;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -10,9 +11,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Objects;
-import java.util.Observable;
 
-public class Server extends Observable implements Runnable{
+public class Server implements Runnable {
 
     private Thread t;
     private int timer;
@@ -20,6 +20,11 @@ public class Server extends Observable implements Runnable{
     private BufferedImage bufferedImage;
     private int timerInterval;
     private Thread screenShotThread;
+    private PCLMessage observableServerMessage;
+
+    public Server(PCLMessage observableServerMessage) {
+        this.observableServerMessage = observableServerMessage;
+    }
 
     public Server() {
 
@@ -61,14 +66,13 @@ public class Server extends Observable implements Runnable{
         Socket connection;
         String message;
         bufferedImage = ScreenShotHandler.captureWholeScreen();
-        messageOut("Screen captured");
         startScreenShotThread(timerInterval);
 
         try {
             server = new ServerSocket(5194, 100);
             messageOut("Server started...");
 
-            while(isRunning) {
+            while (isRunning) {
                 // Establishing connection
                 connection = server.accept();
                 messageOut("Connection received from: " + connection.getInetAddress().getHostAddress());
@@ -90,10 +94,10 @@ public class Server extends Observable implements Runnable{
                     messageOut("Transaction failed!");
                 }
             }
-        }catch (EOFException eof) {
+        } catch (EOFException eof) {
             message = "Client terminated connection";
             messageOut(message);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         messageOut("Server stopped");
@@ -101,8 +105,9 @@ public class Server extends Observable implements Runnable{
 
     private void messageOut(String message) {
         System.out.println("Server: " + message);
-        setChanged();
-        notifyObservers(message);
+        if (Objects.nonNull(observableServerMessage)) {
+            observableServerMessage.setServerMessage(message);
+        }
     }
 
     public int getTimer() {
