@@ -8,10 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -79,12 +76,10 @@ public class MainStage extends Application {
 
     private Group screenShotGroup() {
         //Setting the position of the image
-        screenShotImageView.setX(50);
-        screenShotImageView.setY(25);
 
         //setting the fit height and width of the image view
         screenShotImageView.setFitHeight(450);
-        screenShotImageView.setFitWidth(500);
+        screenShotImageView.setFitWidth(622);
 
         //Setting the preserve ratio of the image view
         screenShotImageView.setPreserveRatio(true);
@@ -155,7 +150,8 @@ public class MainStage extends Application {
         controlHBox.setSpacing(10);
         controlHBox.setAlignment(Pos.CENTER);
         // Parent VBox
-        VBox mainBox = new VBox(outputHBox, controlHBox);
+        Separator separator = new Separator();
+        VBox mainBox = new VBox(outputHBox, controlHBox, separator);
         mainBox.setSpacing(10);
 
         Platform.runLater(mainBox::requestFocus);
