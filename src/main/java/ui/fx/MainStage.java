@@ -141,6 +141,7 @@ public class MainStage extends Application {
                 addressTextField.setOnMouseClicked(e->{
                     addressTextField.setText(addressString);
                     addressTextField.positionCaret(addressString.length());
+                    addressTextField.setOnMouseClicked(ie -> {});
                 });
             }
         });
