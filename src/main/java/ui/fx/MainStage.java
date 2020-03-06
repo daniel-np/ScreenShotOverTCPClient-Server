@@ -151,6 +151,8 @@ public class MainStage extends Application {
             } else {
                 uiController.stopClient();
                 uiController.stopServer();
+                addressTextField.setDisable(false);
+                choiceBox.setDisable(false);
                 startButton.setText("Start");
                 isStartButton[0] = true;
             }
