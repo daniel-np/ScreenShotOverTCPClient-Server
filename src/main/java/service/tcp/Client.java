@@ -127,6 +127,7 @@ public class Client extends Observable implements Runnable {
                 e.printStackTrace();
             }
         }
+        messageOut("Client stopped");
     }
 
     private Image convertBufferedImageThroughSaving(BufferedImage screenShot) {
@@ -181,12 +182,7 @@ public class Client extends Observable implements Runnable {
     }
 
     public void stopClient() {
-        try {
-            this.isRunning = false;
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.isRunning = false;
     }
 
     public int getScreenShotTimer() {

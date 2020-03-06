@@ -19,6 +19,7 @@ public class Server extends Observable implements Runnable{
     private boolean isRunning = false;
     private BufferedImage bufferedImage;
     private int timerInterval;
+    private Thread screenShotThread;
 
     public Server() {
 
@@ -34,8 +35,8 @@ public class Server extends Observable implements Runnable{
     }
 
     private void startScreenShotThread(int timerInterval) {
-        Thread screenShotThread = new Thread(() -> {
-            while (true) {
+        this.screenShotThread = new Thread(() -> {
+            while (isRunning) {
                 try {
                     bufferedImage = ScreenShotHandler.captureWholeScreen();
                     messageOut("Screen captured");
@@ -44,9 +45,10 @@ public class Server extends Observable implements Runnable{
                     e.printStackTrace();
                 }
             }
+            messageOut("Screen-shot handler stopped");
         });
-        screenShotThread.setName("ScreenShot Thread");
-        screenShotThread.start();
+        this.screenShotThread.setName("ScreenShot Thread");
+        this.screenShotThread.start();
     }
 
     @Override
@@ -92,6 +94,7 @@ public class Server extends Observable implements Runnable{
         }  catch (IOException e) {
             e.printStackTrace();
         }
+        messageOut("Server stopped");
     }
 
     private void messageOut(String message) {
@@ -113,11 +116,6 @@ public class Server extends Observable implements Runnable{
     }
 
     public void stopServer() {
-        try {
-            this.isRunning = false;
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.isRunning = false;
     }
 }

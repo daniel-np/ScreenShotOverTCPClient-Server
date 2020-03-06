@@ -105,12 +105,15 @@ public class MainStage extends Application {
         ServerTextArea serverTextArea = new ServerTextArea("Server", rows, cols);
         HBox outputHBox = new HBox(clientTextArea, serverTextArea);
         outputHBox.setSpacing(50);
+
         // Control Area
+        // Address text field
         Label addressLabel = new Label("Address");
         TextField addressTextField = new TextField(uiController.getClientHostAddress());
         addressTextField.setPrefColumnCount(9);
         addressLabel.setLabelFor(addressTextField);
 
+        // Choice
         Label timerChoiceBoxLabel = new Label("Set timer");
         ObservableList<UiController.intervalTimer> observableList =
                 FXCollections.observableArrayList(UiController.intervalTimer.values());
@@ -123,21 +126,33 @@ public class MainStage extends Application {
             uiController.setScreenShotTimer(choiceBox.getValue());
         });
 
+        // Start Button
+        final Boolean[] isStartButton = {true};
         Button startButton = new Button("Start");
         startButton.setOnAction((actionEvent) -> {
-            if (isValidAddress(addressTextField.getText())) {
-                addressTextField.setDisable(true);
-                choiceBox.setDisable(true);
-                decideStartup(addressTextField.getText(), choiceBox.getValue());
+            if(isStartButton[0]){
+                if (isValidAddress(addressTextField.getText())) {
+                    addressTextField.setDisable(true);
+                    choiceBox.setDisable(true);
+                    decideStartup(addressTextField.getText(), choiceBox.getValue());
+                    // Set startButton to be a Stop Button
+                    startButton.setText("Stop");
+                    isStartButton[0] = false;
+                } else {
+                    String addressString = addressTextField.getText();
+                    addressTextField.clear();
+                    addressTextField.setPromptText("INVALID");
+                    addressTextField.setOnMouseClicked(e->{
+                        addressTextField.setText(addressString);
+                        addressTextField.positionCaret(addressString.length());
+                        addressTextField.setOnMouseClicked(ie -> {});
+                    });
+                }
             } else {
-                String addressString = addressTextField.getText();
-                addressTextField.clear();
-                addressTextField.setPromptText("INVALID");
-                addressTextField.setOnMouseClicked(e->{
-                    addressTextField.setText(addressString);
-                    addressTextField.positionCaret(addressString.length());
-                    addressTextField.setOnMouseClicked(ie -> {});
-                });
+                uiController.stopClient();
+                uiController.stopServer();
+                startButton.setText("Start");
+                isStartButton[0] = true;
             }
         });
 

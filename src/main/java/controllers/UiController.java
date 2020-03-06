@@ -47,8 +47,20 @@ public class UiController {
         server.start(intervalTimer.getTime());
     }
 
+    public void stopServer() {
+        if(server.isRunning()) {
+            server.stopServer();
+        }
+    }
+
     public void startClient(intervalTimer intervalTimer) {
         client.start(intervalTimer.getTime());
+    }
+
+    public void stopClient() {
+        if(client.isRunning()) {
+            client.stopClient();
+        }
     }
 
     public String getClientHostAddress() {
