@@ -127,8 +127,17 @@ public class MainStage extends Application {
 
         Button startButton = new Button("Start");
         startButton.setOnAction((actionEvent)-> {
-            uiController.startServer(choiceBox.getValue());
-            uiController.startClient(choiceBox.getValue());
+            if(addressTextField.getText().equals("127.0.0.1")){
+                // If localHost start both server and client
+                uiController.startServer(choiceBox.getValue());
+                uiController.startClient(choiceBox.getValue());
+            } else if(addressTextField.getText().equals("")){
+                // If no IP start only server
+                uiController.startServer(choiceBox.getValue());
+            } else {
+                // Else start only client
+                uiController.startClient(choiceBox.getValue());
+            }
         });
 
         HBox controlHBox = new HBox(
