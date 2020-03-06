@@ -29,6 +29,7 @@ public class Server extends Observable implements Runnable{
         this.timerInterval = timerInterval;
         if (t == null) {
             t = new Thread(this);
+            t.setDaemon(true);
             t.setName("Server Thread");
             t.start();
         }
@@ -48,6 +49,7 @@ public class Server extends Observable implements Runnable{
             messageOut("Screen-shot handler stopped");
         });
         this.screenShotThread.setName("ScreenShot Thread");
+        this.screenShotThread.setDaemon(true);
         this.screenShotThread.start();
     }
 

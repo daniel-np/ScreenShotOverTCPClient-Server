@@ -39,6 +39,7 @@ public class Client extends Observable implements Runnable {
         this.screenShotTimer = screenShotTimer;
         if (t == null) {
             t = new Thread(this);
+            t.setDaemon(true);
             t.setName("Client Thread");
             t.start();
         }
@@ -48,7 +49,6 @@ public class Client extends Observable implements Runnable {
     public void run() {
         this.isRunning = true;
         String message;
-        int connectionRefusedCounter = 0;
         message = "Client started...";
         messageOut(message);
         connect(0);
